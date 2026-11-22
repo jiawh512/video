@@ -1,19 +1,19 @@
-﻿# 逐章批量重制：一次跑完第一、二、三章（顺序执行，每章跑完自动接下一章）
+# 逐章批量重制：一次跑完第一、二、三章（顺序执行，每章跑完自动接下一章）
 $ErrorActionPreference = 'Continue'
 $ws = 'D:\Backup\Documents\deepseek-harness\default-workspace'
 $log = Join-Path $ws 'chapter-queue.log'
 function Note($t) { "$(Get-Date -Format 'MM-dd HH:mm:ss')  $t" | Out-File -FilePath $log -Append -Encoding utf8 }
 
 $chapters = @(
-    @{ n = 1;  story = 'E:\神秘复苏_自动化生成工具_Desktop版\third_party\novel-to-script-team\outputs\神秘复苏\第一章_v2\分镜表.json'; out = 'E:\神秘复苏_视觉资产\32_第一章_重制' },
-    @{ n = 2;  story = 'E:\神秘复苏_自动化生成工具_Desktop版\third_party\novel-to-script-team\outputs\神秘复苏\第二章\分镜表.json';    out = 'E:\神秘复苏_视觉资产\33_第二章_重制' },
-    @{ n = 3;  story = 'E:\神秘复苏_自动化生成工具_Desktop版\third_party\novel-to-script-team\outputs\神秘复苏\第三章\分镜表.json';    out = 'E:\神秘复苏_视觉资产\34_第三章_重制2' },
-    @{ n = 5;  story = 'E:\神秘复苏_自动化生成工具_Desktop版\third_party\novel-to-script-team\outputs\神秘复苏\第5章\分镜表.json';   out = 'E:\神秘复苏_视觉资产\36_第五章' },
-    @{ n = 6;  story = 'E:\神秘复苏_自动化生成工具_Desktop版\third_party\novel-to-script-team\outputs\神秘复苏\第6章\分镜表.json';   out = 'E:\神秘复苏_视觉资产\37_第六章' },
-    @{ n = 7;  story = 'E:\神秘复苏_自动化生成工具_Desktop版\third_party\novel-to-script-team\outputs\神秘复苏\第7章\分镜表.json';   out = 'E:\神秘复苏_视觉资产\38_第七章' },
-    @{ n = 8;  story = 'E:\神秘复苏_自动化生成工具_Desktop版\third_party\novel-to-script-team\outputs\神秘复苏\第8章\分镜表.json';   out = 'E:\神秘复苏_视觉资产\39_第八章' },
-    @{ n = 9;  story = 'E:\神秘复苏_自动化生成工具_Desktop版\third_party\novel-to-script-team\outputs\神秘复苏\第9章\分镜表.json';   out = 'E:\神秘复苏_视觉资产\40_第九章' },
-    @{ n = 10; story = 'E:\神秘复苏_自动化生成工具_Desktop版\third_party\novel-to-script-team\outputs\神秘复苏\第10章\分镜表.json';  out = 'E:\神秘复苏_视觉资产\41_第十章' }
+    @{ n = 1;  story = 'D:\Backup\Documents\deepseek-harness\default-workspace\third_party\novel-to-script-team\outputs\神秘复苏\第一章_v2\分镜表.json'; out = 'E:\神秘复苏_视觉资产\32_第一章_重制' },
+    @{ n = 2;  story = 'D:\Backup\Documents\deepseek-harness\default-workspace\third_party\novel-to-script-team\outputs\神秘复苏\第二章\分镜表.json';    out = 'E:\神秘复苏_视觉资产\33_第二章_重制' },
+    @{ n = 3;  story = 'D:\Backup\Documents\deepseek-harness\default-workspace\third_party\novel-to-script-team\outputs\神秘复苏\第三章\分镜表.json';    out = 'E:\神秘复苏_视觉资产\34_第三章_重制2' },
+    @{ n = 5;  story = 'D:\Backup\Documents\deepseek-harness\default-workspace\third_party\novel-to-script-team\outputs\神秘复苏\第5章\分镜表.json';   out = 'E:\神秘复苏_视觉资产\36_第五章' },
+    @{ n = 6;  story = 'D:\Backup\Documents\deepseek-harness\default-workspace\third_party\novel-to-script-team\outputs\神秘复苏\第6章\分镜表.json';   out = 'E:\神秘复苏_视觉资产\37_第六章' },
+    @{ n = 7;  story = 'D:\Backup\Documents\deepseek-harness\default-workspace\third_party\novel-to-script-team\outputs\神秘复苏\第7章\分镜表.json';   out = 'E:\神秘复苏_视觉资产\38_第七章' },
+    @{ n = 8;  story = 'D:\Backup\Documents\deepseek-harness\default-workspace\third_party\novel-to-script-team\outputs\神秘复苏\第8章\分镜表.json';   out = 'E:\神秘复苏_视觉资产\39_第八章' },
+    @{ n = 9;  story = 'D:\Backup\Documents\deepseek-harness\default-workspace\third_party\novel-to-script-team\outputs\神秘复苏\第9章\分镜表.json';   out = 'E:\神秘复苏_视觉资产\40_第九章' },
+    @{ n = 10; story = 'D:\Backup\Documents\deepseek-harness\default-workspace\third_party\novel-to-script-team\outputs\神秘复苏\第10章\分镜表.json';  out = 'E:\神秘复苏_视觉资产\41_第十章' }
 )
 
 $py = 'E:\Comfy-Desktop\ComfyUI-Installs\ComfyUI\ComfyUI\.venv\Scripts\python.exe'

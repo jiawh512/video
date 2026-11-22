@@ -8,7 +8,7 @@ T2V = os.path.join(PROJECT, "t2v_wan21")
 
 NOVEL = r"E:\神秘复苏_文本资产\神秘复苏(1-500章).txt"
 CHAPTER_DIR = r"E:\神秘复苏_文本资产"                  # chapterN.txt
-STORY_ROOT = r"E:\神秘复苏_自动化生成工具_Desktop版\third_party\novel-to-script-team\outputs\神秘复苏"
+STORY_ROOT = r"D:\Backup\Documents\deepseek-harness\default-workspace\third_party\novel-to-script-team\outputs\神秘复苏"
 
 ASSET_ROOT = r"E:\神秘复苏_视觉资产"
 CHAR_DIR = os.path.join(ASSET_ROOT, "01_角色概念图")
@@ -64,7 +64,7 @@ def shot_temp(n: int, idx: int, suffix: str) -> str:
 
 
 # ---------- 剧集（照参考片脚本改编，独立于「章」） ----------
-EP_ROOT = r"E:\神秘复苏_自动化生成工具_Desktop版\third_party\novel-to-script-team\outputs\神秘复苏\剧集"
+EP_ROOT = r"D:\Backup\Documents\deepseek-harness\default-workspace\third_party\novel-to-script-team\outputs\神秘复苏\剧集"
 
 for _n in range(1, 19):
     CHAPTER_STORY[100 + _n] = os.path.join(EP_ROOT, f"第{_n:02d}集", "分镜表.json")

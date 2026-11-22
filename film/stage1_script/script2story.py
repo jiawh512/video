@@ -162,7 +162,7 @@ def main(argv):
     md = SCRIPT_MD
     if argv and argv[0] == "build":
         ep_no = int(argv[1])
-        base = r"E:\神秘复苏_自动化生成工具_Desktop版\third_party\novel-to-script-team\outputs\神秘复苏\剧集"
+        base = r"D:\Backup\Documents\deepseek-harness\default-workspace\third_party\novel-to-script-team\outputs\神秘复苏\剧集"
         for e in parse(md):
             if e["no"] == ep_no:
                 emit(e, os.path.join(base, f"第{ep_no:02d}集"))
