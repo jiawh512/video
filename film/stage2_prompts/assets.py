@@ -24,7 +24,8 @@ NAME_ALIAS = {
 
 GROUP_PATTERNS = ("学生", "同学", "警察", "病人", "急救", "尸体", "数名", "几名",
                   "前排", "群众", "全班", "众人", "大家", "人群", "所有人", "围观",
-                  "人皮", "黑影", "鬼影", "声音", "羊皮纸", "纸", "录像", "录音")
+                  "人皮", "黑影", "鬼影", "声音", "羊皮纸", "纸", "录像", "录音",
+                  "行人", "路人", "司机", "摊主", "工作人员", "邻居")
 
 VIEW_HINTS = {
     "背影": "背面", "背": "背面", "背面": "背面",
@@ -46,6 +47,11 @@ PLATE_MAP = [
     (("操场", "校舍", "教学楼外"), "LOC_SCHOOL_EXTERIOR"),
     (("玄关", "网友家", "房门口"), "LOC_NETIZEN_HOME"),
     (("手机", "帖", "屏"), "LOC_PHONE_FORUM"),
+    # 白骨树：树干先于整棵树匹配，否则「白骨树·树干」会被整棵树规则吃掉
+    (("白骨树·树干", "白骨树·树干前"), "LOC_WHITE_BONE_TREE_TRUNK"),
+    (("白骨树",), "LOC_WHITE_BONE_TREE"),
+    # 鬼域：无光、湿水泥、没有墙的地方，统一用一张近乎全黑的定场图
+    (("郑飞线", "无光空间", "光外·黑暗", "鬼域"), "LOC_GHOST_DOMAIN"),
 ]
 
 
@@ -60,6 +66,17 @@ def normalize(name: str) -> str:
 
 def is_group(name: str) -> bool:
     return any(p in (name or "") for p in GROUP_PATTERNS)
+
+
+# 一次性龙套 / 虚影 / 身体局部：不进参考图体系，但也不算群像（不触发人群纪律）
+NO_REF = {"惨白的手掌", "鬼", "鬼影", "鬼奴", "黑影", "人影", "男生", "一个男生",
+          "无名少年", "年轻男人", "贴墙的人", "李明", "声音", "旁白", "旁白（杨间内心）"}
+
+
+def needs_ref(name: str) -> bool:
+    """这个角色名需要参考图吗？群像、虚影、龙套都不需要。"""
+    n = normalize(name)
+    return bool(n) and not is_group(n) and n not in NO_REF
 
 
 def character_dir(name: str) -> str:

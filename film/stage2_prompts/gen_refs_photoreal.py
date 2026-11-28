@@ -29,6 +29,8 @@ PEOPLE = {
     "王老师": "a Chinese female teacher in her thirties, glasses, tied-back hair, plain blouse, stern expression",
     "苗小善": "an 18-year-old Chinese high school girl, long straight black hair, gentle expression, blue and white school uniform",
     "雷电法王": "a Chinese male doctor in his thirties, white coat, short black hair, tired eyes, hospital badge",
+    "鬼婴": "a newborn-sized infant ghost, waxy grey-white skin, sunken black eye sockets with no pupils, dark purple lips, sparse thin black hair, emaciated curled body, stiff limbs, wrapped in a tattered dark cloth, no blood, no gore, cold white side light, horror atmosphere",
+    "赵强": "an 18-year-old Chinese young man, round face, buzz cut, small single-lidded eyes, flat nose bridge, thick lips, wheat skin, blue and white school uniform, honest simple expression",
 }
 
 client = ComfyUIClient("127.0.0.1:8188")

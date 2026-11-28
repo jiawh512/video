@@ -135,7 +135,7 @@ def compile_prompt(shot: dict, canon: dict, model: str = "minimax_h3") -> dict:
         gaps.append(f"定场图未匹配（{plate_key}）")
 
     # 3) 角色正典（逐字）
-    cast = [c for c in (shot.get("characters") or []) if c and not assets.is_group(c)]
+    cast = [c for c in (shot.get("characters") or []) if assets.needs_ref(c)]
     char_clauses = []
     for name in cast[:3]:
         key = assets.normalize(name)

@@ -29,7 +29,7 @@ def build_refs(shot, verbose=True):
         notes.append(f"定场 ∅（{key}）")
 
     for name in (shot.get("characters") or [])[:2]:
-        if assets.is_group(name):
+        if not assets.needs_ref(name):
             continue
         ref, reason = assets.pick_ref(name, shot.get("shot_size", ""), shot.get("camera_move", ""))
         if ref:

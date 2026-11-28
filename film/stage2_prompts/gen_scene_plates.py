@@ -29,6 +29,9 @@ PLATES = {
     "LOC_RESTROOM": "a Chinese school restroom at night, tiled walls, a row of stalls, one stall door ajar, dim fluorescent light, wet floor",    "LOC_STAIRCASE": "a dark Chinese apartment stairwell, concrete steps, single bulb, peeling paint, iron railing",
     "LOC_SCHOOL_EXTERIOR": "a Chinese senior-high school building exterior at night, dark windows, one row of lights on, empty playground, low angle looking up",
     "LOC_NETIZEN_HOME": "a small Chinese apartment interior at night, narrow entryway facing a closed front door, shoe rack, dim ceiling light",    "LOC_PHONE_FORUM": "extreme close-up of a smartphone screen in the dark showing a Chinese internet forum thread, dark mode, rows of reply text, slight screen reflection",
+    "LOC_WHITE_BONE_TREE": "an endless dim grey-white void with no walls and no horizon, one huge pale bone-white tree standing alone in the middle distance, its branches like fused bone, rotting rags and strips of dried skin hanging from them, several dried skulls and paper streamers, thin cold fog on the ground",
+    "LOC_WHITE_BONE_TREE_TRUNK": "a pale bone-white tree trunk, a rusted iron coffin nail as thick as a grown man's arm driven deep into the wood, rust flaking in layers, black liquid seeping out and dripping down the bark, dark wet bark texture",
+    "LOC_GHOST_DOMAIN": "a pitch-dark interior with no visible light source, barely visible wet cement walls and a grey concrete floor, thick shadow swallowing the edges, cold damp texture, faint wet reflection on the wall",
 }
 
 client = ComfyUIClient("127.0.0.1:8188")
@@ -38,7 +41,13 @@ if not client.is_server_running():
 
 os.makedirs(OUT_ROOT, exist_ok=True)
 
+only = sys.argv[1:]
 for i, (key, desc) in enumerate(PLATES.items()):
+    if only and key not in only:
+        continue
+    if not only and os.path.exists(os.path.join(OUT_ROOT, f"{key}.png")):
+        print("[SKIP]", key, "已存在")
+        continue
     wf = build_character_workflow(
         positive_prompt=f"{STYLE}, {desc}",
         unet_name="z_image_turbo_bf16.safetensors",

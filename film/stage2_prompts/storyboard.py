@@ -114,7 +114,7 @@ def check(chapter: int, verbose=False):
                 inner_no_plate.append(f"S{idx}")
 
         for name in (s.get("characters") or []):
-            if not name or assets.is_group(name):
+            if not assets.needs_ref(name):
                 continue
             ref, reason = assets.pick_ref(name, s.get("shot_size", ""), s.get("camera_move", ""))
             if not ref:
