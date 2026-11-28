@@ -10,6 +10,7 @@
 import json
 import os
 import re
+import shutil
 
 from . import assets
 from ..common import paths
@@ -28,6 +29,58 @@ def load(chapter: int):
 
 def hanzi(s: str) -> int:
     return len(re.sub(r"[^\u4e00-\u9fa5]", "", s or ""))
+
+
+# ---------- 时长口径（唯一一条） ----------
+# 一句话念多久，由字数决定：1.3 倍语速下 CHARS_PER_SEC = 4.8 字/秒。
+# 分镜表里的 duration_sec 是这条规则的产物，不是手写的常量；
+# 渲染时以实测音频为准，并夹在 SHOT_MIN_SEC–SHOT_MAX_SEC 之间。
+DUR_TOL_SEC = 1.0
+DUR_TOL_RATIO = 0.20
+
+
+def expected_duration(chars: int) -> float:
+    if not chars:
+        return 0.0
+    return round(chars / paths.CHARS_PER_SEC, 1)
+
+
+def duration_ok(declared: float, expected: float) -> bool:
+    if not expected:
+        return True
+    return abs(declared - expected) <= max(DUR_TOL_SEC, expected * DUR_TOL_RATIO)
+
+
+def fix_durations(chapter: int, write: bool = False):
+    """按旁白字数重算 duration_sec。默认只报告，write=True 才写回分镜表。
+
+    落在 SHOT_MIN_SEC–SHOT_MAX_SEC 之外的**不改**：那是旁白需要再切分，
+    不是改时长字段能修的；硬写只会让数据说谎。
+    """
+    data, path = load(chapter)
+    todo, skipped = [], []
+    for s in data.get("shots", []):
+        chars = hanzi(s.get("narration", ""))
+        if not chars:
+            continue
+        want = expected_duration(chars)
+        idx = s.get("idx")
+        if want < paths.SHOT_MIN_SEC or want > paths.SHOT_MAX_SEC:
+            skipped.append((idx, want, chars))
+            continue
+        old = s.get("duration_sec")
+        try:
+            old_f = float(old)
+        except (TypeError, ValueError):
+            old_f = -1.0
+        if old_f < 0 or abs(old_f - want) > 0.05:
+            todo.append((idx, old, want, chars))
+            s["duration_sec"] = want
+    if write and todo:
+        shutil.copy2(path, path + ".bak")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    return path, todo, skipped, write
 
 
 def check(chapter: int, verbose=False):
@@ -69,10 +122,9 @@ def check(chapter: int, verbose=False):
 
         chars = hanzi(s.get("narration", ""))
         declared = float(s.get("duration_sec") or 0)
-        if chars and declared:
-            expect = chars / paths.CHARS_PER_SEC
-            if abs(expect - declared) > max(2.0, declared * 0.35):
-                dur_mismatch.append((idx, declared, round(expect, 1)))
+        expect = expected_duration(chars)
+        if chars and declared and not duration_ok(declared, expect):
+            dur_mismatch.append((idx, declared, expect))
 
         vp = s.get("visual_prompt") or ""
         if ("no anime" not in vp) and ("photorealistic live-action film still" not in vp):
@@ -91,7 +143,11 @@ def check(chapter: int, verbose=False):
     if inner_no_plate:
         warnings.append(f"内层镜没有定场图（可接受）{len(inner_no_plate)} 镜")
     if dur_mismatch:
-        warnings.append(f"时长与字数不匹配 {len(dur_mismatch)} 镜（前 5）: " + str(dur_mismatch[:5]))
+        warnings.append(
+            f"时长与旁白字数不一致 {len(dur_mismatch)} 镜（前 5: 镜号, 声明秒, 应为秒）: "
+            + str(dur_mismatch[:5])
+            + "；能靠字数修的直接跑 `python -m film durations all --write`，超 8–12s 的要切分旁白"
+        )
 
     stats = {
         "shots": len(shots),

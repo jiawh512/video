@@ -1,4 +1,4 @@
-# 逐章批量重制：一次跑完第一、二、三章（顺序执行，每章跑完自动接下一章）
+# 逐章批量重制：走 film 包顺序渲染（每章跑完自动接下一章）
 $ErrorActionPreference = 'Continue'
 $ws = 'D:\Backup\Documents\deepseek-harness\default-workspace'
 $log = Join-Path $ws 'chapter-queue.log'
@@ -46,9 +46,9 @@ foreach ($c in $chapters) {
     @{ chapter = $c.n; story_json = $c.story; out_dir = $c.out } | ConvertTo-Json | Set-Content (Join-Path $ws 'current_chapter.json') -Encoding UTF8
 
     $env:PYTHONIOENCODING = 'utf-8'
-    $env:STORY_JSON = $c.story
-    $env:OUT_DIR = $c.out
-    $p = Start-Process -FilePath 'python' -ArgumentList '-u', 'run_storyboard_test.py', 'all' -WorkingDirectory $wd -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $c.out 'run.log') -RedirectStandardError (Join-Path $c.out 'run.err.log')
+    # 走 film 包：预检 → 编译提示词 → 出片，和手动跑是同一条路径
+    # （旧驱动 run_storyboard_test.py 读的是分镜表里自由写的 visual_prompt，已弃用）
+    $p = Start-Process -FilePath 'python' -ArgumentList '-u', '-m', 'film', 'render', "$($c.n)", 'all' -WorkingDirectory $ws -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $c.out 'run.log') -RedirectStandardError (Join-Path $c.out 'run.err.log')
     $p.WaitForExit()
 
     $big = Get-ChildItem $c.out -Filter '分层试跑_*.mp4' -ErrorAction SilentlyContinue | Select-Object -First 1

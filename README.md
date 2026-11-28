@@ -60,14 +60,15 @@ film/
 - Python 3.10+
 - ffmpeg（在 PATH 里）
 - ComfyUI（本地，默认 `127.0.0.1:8188`），需要 MiniMax H3 视频模型 + 一个 T2I 模型（Z-Image 或 Qwen-Image）
-- Windows 自带的 SAPI 做配音兜底（edge-tts 在部分网络下 403）
+- edge-tts（`zh-CN-YunxiNeural`）做配音，需联网；受限网络下 403，SAPI 兜底留在 `t2v_wan21/generate_novel_chapter_video.py`
 
 ## 设计笔记
 
-两条经验写在 `流水线梳理与重构.md` 里：
+三条经验写在 `流水线梳理与重构.md` 里：
 
 1. **渲染前预检比渲染后返工便宜一百倍**：参考图缺失、定场图没匹配、旁白字数与时长不匹配，这些都能在提交前查出来。
 2. **角色一致性靠三件事**：一张正典外形描述（所有镜头共用）、多视角参考图、显式的“人群/禁即兴”条款。任缺一项，换镜就换人。
+3. **时长只有一个口径**：`duration_sec = 旁白字数 / 4.8`（1.3 倍语速），由字数推出来而不是手写；渲染时以实测音频为准并夹在 8–12 秒。`python -m film durations all` 只报告，加 `--write` 才改分镜表。
 
 ## 许可
 
